@@ -1,0 +1,11 @@
+# private keys
+*.pem
+*.ppk
+
+# emacs extras
+*~
+*[#]
+
+#convenience scripts for ssh and file transfering
+*.bat
+winscp_script.txt
