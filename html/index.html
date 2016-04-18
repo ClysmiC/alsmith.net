@@ -3,75 +3,228 @@
   <head>
     <meta charset="utf-8">
     <title>Andrew Smith - Programmer</title>
+
+    <link rel="icon" 
+	  type="image/png" 
+	  href="img/icon.png">
   </head>
   
   <body>
     <!-- IMAGE ABOVE TABS -->
-    <div id="andrewImage" class="container-fluid">
-      <div class="col-xs-5"></div>
-      
-      <!-- img-rounded and col-xs-2 don't play nice when both classes of img, so put the img in a div -->
-      <div class="col-xs-2">
-	<img src="img/andrew.jpg" class="img-rounded" alt="Andrew Smith - Programmer">
-      </div>
-      
-      <div class="col-xs-5"></div>
-    </div>
-
-    <!-- TABS -->
-    <div id="tabBar" class="container text-center">
-      <ul class="nav nav-tabs">
-	<li class="active col-md-3">
-	  <a data-toggle="tab" href="#aboutMe">About Me</a>
-	</li>
+    <div id="mainNavbar" class="navbar-default navbar-fixed-top"> <!--not REALLY a bootstrap navbar... just borrowing the fixed-top behavior--->
+      <div id="andrewImage" class="container-fluid">
 	
-	<li class="col-md-3">
-	  <a data-toggle="tab" href="#skills">Skills</a>
-	</li>
-	
-	<li class="col-md-3">
-	  <a data-toggle="tab" href="#sampleWorks">Sample Works</a>
-	</li>
-	
-	<li class="col-md-3">
-	  <a data-toggle="tab" href="#contactMe">Contact Me</a>
-	</li>
-      </ul>
-
-
-      <!-- TAB PANE CONTENT -->
-      <div class="tab-content">
-	<div class="tab-pane active" id="aboutMe">
-	  About Me
-	</div>
-
-	<div class="tab-pane" id="skills">
-	  Skills
-	</div>
-
-	<div class="tab-pane" id="sampleWorks">
-	  Sample Works
-	</div>
-
-	<div class="tab-pane" id="contactMe">
-	  Contact Me
+	<!-- img-rounded and col-xs-2 don't play nice when both classes of img, so put the img in a div -->
+	<div class="col-xs-offset-5 col-xs-2">
+	  <img src="img/andrew.jpg" class="img-rounded" alt="Andrew Smith - Programmer">
 	</div>
       </div>
-      
+
+      <!-- TABS -->
+      <div id="tabBarContainer" class="container text-center">
+	<ul id="tabBar" class="nav nav-tabs">
+	  <li class="active col-md-3">
+	    <a data-toggle="tab" href="#aboutMe">About Me</a>
+	  </li>
+	  
+	  <li class="col-md-3">
+	    <a data-toggle="tab" href="#sampleWorks">Sample Works</a>
+	  </li>
+	  
+	  <li class="col-md-3">
+	    <a data-toggle="tab" href="#resume">Resume</a>
+	  </li>
+	  
+	  <li class="col-md-3">
+	    <a data-toggle="tab" href="#contactMe">Contact Me</a>
+	  </li>
+	</ul>
+      </div>
     </div>
 
-    <!-- My stylesheet -->
-    <link rel="stylesheet" type="text/css" href="styles.css">
 
-    <!-- JQuery -->
-    <script type="text/javascript" src="jquery/jquery-1.12.3.min.js"></script>
+    <!-- TAB PANE CONTENT -->
+    <div id="tabContentContainer" class="container col-xs-offset-3 col-xs-6 tab-content text-left">
+      <!-- ABOUT ME -->
+      
+      <div class="tab-pane active fade in" id="aboutMe">
+	<h2>Hi, I am Andrew L. Smith - Programmer</h2>
+	
+	<h4>In a hurry? Just read the bold and the bullet points.</h4>
 
-    <!-- Bootstrap -->
-    <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
+	<p>
+	  I'm a <b>22 year-old college student</b>
+	  from <b>St. Louis, Missouri</b>, studying <b>computer
+	    science</b> at <b>Georgia Institute of Technology</b>. I
+	  started programming when I was 14, learning how to make
+	  simple 2D games with a program called Game Maker. I
+	  started taking CS classes at 16 and have been trying to
+	  learn more ever since. <b>Most of my work experience is
+	    software development</b>, but I have been exposed to a lot
+	  more than that in my class and personal
+	  projects-- <span><b><a id="sampleLink">check them
+		out.</a></b></span> <!-- span to keep on 1 line -->
+	  Or look
+	  at <span><b><a href="https://github.com/clysmic">my
+		github!</a></b></span> I only started using github a few
+	  years ago, so it doesn't have all my projects but I am
+	  trying to add to it as I work on new things!
+	</p>
 
-    <!-- If I split site into multiple pages, delete "[]" around #include to use SSI for jquery and bootstrap -->
-    <!--[#include] file="jquery.html" -->
-    <!--[#include] file="bootstrap.html" -->
-  </body>
+	<hr>
+	
+	<p>
+	  Here is a quick run-down of what <b>languages I have
+	    worked frequently with</b>:
+	</p>
+	
+	<ul>
+	  <li>Java (+ Android Programming)</li>
+	  <li>C#</li>
+	  <li>Python</li>
+	  <li>GML</li>
+	  <li>Basic HTML/CSS (enough to make this site!)</li>
+	</ul>
+
+	<p>
+	  And a large assortment of <b>languages that I have used to
+	    varying degrees in classes</b> (but haven't used too
+	  frequently or recently). The higher on this list, the more
+	  comfortable I am with it:
+	</p>
+	
+	<ul>
+	  <li>C (+ Arduino)</li>
+	  <li>C++</li>
+	  <li>Processing</li>
+	  <li>Javascript + JQuery</li>
+	  <li>SQL</li>
+	  <li>VHDL</li>
+	</ul>
+
+	<p>
+	  For a better picture of my skill-set, check
+	  out <span><b><a id="resumeLink">my resume.</a></b></span>
+	</p>
+
+	<hr>
+
+	<p>
+	  Lastly <b>(and least importantly)</b>, here are some things about
+	  me that only other programmers will care about:
+	</p>
+	
+	<ul id="miscList">
+	  <li>Keyboard:
+	    <ul>
+	      <li>
+		Dvorak
+	      </li>
+	      <li>
+		Das Model S Ultimate (blank
+		keycaps)
+	      </li>
+	      <li>
+		Cherry MX Blue
+	      </li>
+	    </ul>
+	  </li>
+	  <li>Preferred Editors:
+	    <ul>
+	      <li>Sublime Text</li>
+	      <li>IntelliJ IDEA</li>
+	      <li>Emacs (still learning!)</li>
+	    </ul>
+	  </li>
+	  <li>Preferred Style:
+	    <ul id="bracketExample">
+	      <li>Brackets:</li>
+	      <li class="list-unstyled monospaceFont">
+		int foo()
+	      </li>
+	      <li class="list-unstyled monospaceFont">
+		{
+	      </li>
+	      <li class="list-unstyled monospaceFont">
+		&nbsp;&nbsp;&nbsp;&nbsp;...
+	      </li>
+	      <li class="list-unstyled monospaceFont">
+		}
+	      </li>
+
+	      <li class="list-unstyled">&nbsp;</li> <!-- spacing -->
+	      <li>Tabs vs. Spaces:</li>
+	      <ul>
+		<li>Spaces (4 per tab, 2 works too)</li>
+	      </ul>
+	    </ul>
+	  <li>Operating Systems:
+	    <ul>
+	      <li>Windows 7</li>
+	      <li>Ubuntu (when needed)</li>
+	  </li>
+	  </ul>
+
+	  <button class="btn center-block btn-primary backToTop">Back to the top</button>
+      </div>
+
+
+      <!-- SAMPLE WORKS -->
+      
+      <div class="tab-pane fade in" id="sampleWorks">
+	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+	do eiusmod tempor incididunt ut labore et dolore magna
+	aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+	ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis
+	aute irure dolor in reprehenderit in voluptate velit esse
+	cillum dolore eu fugiat nulla pariatur. Excepteur sint
+	occaecat cupidatat non proident, sunt in culpa qui officia
+	deserunt mollit anim id est laborum.
+      </div>
+
+      <div class="tab-pane fade in" id="resume">
+	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+	do eiusmod tempor incididunt ut labore et dolore magna
+	aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+	ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis
+	aute irure dolor in reprehenderit in voluptate velit esse
+	cillum dolore eu fugiat nulla pariatur. Excepteur sint
+	occaecat cupidatat non proident, sunt in culpa qui officia
+	deserunt mollit anim id est laborum.
+      </div>
+
+      <div class="tab-pane fade in" id="contactMe">
+	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+	eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+	minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+	aliquip ex ea commodo consequat. Duis aute irure dolor in
+	reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+	pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+	culpa qui officia deserunt mollit anim id est laborum.
+      </div>
+    </div>
+    
+</div>
+
+<!-- Fonts from Google -->
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Titillium+Web">
+
+<!-- JQuery -->
+<script type="text/javascript" src="jquery/jquery-1.12.3.min.js"></script>
+
+<!-- Bootstrap -->
+<script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
+
+
+<!-- My stylesheet -->
+<link rel="stylesheet" type="text/css" href="styles.css">
+
+<!-- My javascript -->
+<script type="text/javascript" src="scripts.js"></script>
+
+<!-- If I split site into multiple pages, delete "[]" around #include to use SSI for jquery and bootstrap -->
+<!--[#include] file="jquery.html" -->
+<!--[#include] file="bootstrap.html" -->
+</body>
 </html>

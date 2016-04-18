@@ -3,7 +3,68 @@
     padding-top: 1em;
 }
 
-#tabBar
+#tabBarContainer
 {
     padding-top: 2em;
+}
+
+#tabBar
+{
+    font-size: 1.3em;
+    font-weight: bold;
+}
+
+#tabContentContainer
+{
+    clear: both;
+    padding-top: 1em;
+}
+
+#miscList > li
+{
+    padding-top: 1em;
+}
+
+li
+{
+    list-style: disc;
+}
+
+.monospaceFont
+{
+    font-family: courier, monospace
+}
+
+.backToTop
+{
+    margin-top: 3em;
+    margin-bottom: 3em;
+}
+
+span
+{
+    white-space: nowrap;
+}
+
+h4
+{
+    padding-top: 1em;
+}
+
+p
+{
+    font-size: 110%;
+    padding-top: 1em;
+    line-height: 1.5em;
+}
+
+a:hover
+{
+    cursor: pointer;
+}
+
+body
+{
+    font-family: 'Titillium Web', arial, sans-serif;
+    padding-bottom: 3em;
 }
