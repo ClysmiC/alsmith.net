@@ -2,61 +2,76 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="../../favicon.ico">
-
-    <title>Starter Template for Bootstrap</title>
+    <title>Andrew Smith - Programmer</title>
   </head>
-
+  
   <body>
-    <style>
-      body
-      {
-        padding-top: 50px;
-      }
-
-      .starter-template
-      {
-        padding: 40px 15px;
-        text-align: center;
-      }
-    </style>
-
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Project name</a>
-        </div>
-        <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-          </ul>
-        </div><!--/.nav-collapse -->
+    <!-- IMAGE ABOVE TABS -->
+    <div id="andrewImage" class="container-fluid">
+      <div class="col-xs-5"></div>
+      
+      <!-- img-rounded and col-xs-2 don't play nice when both classes of img, so put the img in a div -->
+      <div class="col-xs-2">
+	<img src="img/andrew.jpg" class="img-rounded" alt="Andrew Smith - Programmer">
       </div>
-    </nav>
+      
+      <div class="col-xs-5"></div>
+    </div>
 
-    <div class="container">
+    <!-- TABS -->
+    <div id="tabBar" class="container text-center">
+      <ul class="nav nav-tabs">
+	<li class="active col-md-3">
+	  <a data-toggle="tab" href="#aboutMe">About Me</a>
+	</li>
+	
+	<li class="col-md-3">
+	  <a data-toggle="tab" href="#skills">Skills</a>
+	</li>
+	
+	<li class="col-md-3">
+	  <a data-toggle="tab" href="#sampleWorks">Sample Works</a>
+	</li>
+	
+	<li class="col-md-3">
+	  <a data-toggle="tab" href="#contactMe">Contact Me</a>
+	</li>
+      </ul>
 
-      <div class="starter-template">
-        <h1>Bootstrap starter template</h1>
-        <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
+
+      <!-- TAB PANE CONTENT -->
+      <div class="tab-content">
+	<div class="tab-pane active" id="aboutMe">
+	  About Me
+	</div>
+
+	<div class="tab-pane" id="skills">
+	  Skills
+	</div>
+
+	<div class="tab-pane" id="sampleWorks">
+	  Sample Works
+	</div>
+
+	<div class="tab-pane" id="contactMe">
+	  Contact Me
+	</div>
       </div>
+      
+    </div>
 
-    </div><!-- /.container -->
+    <!-- My stylesheet -->
+    <link rel="stylesheet" type="text/css" href="styles.css">
 
-    <!--#include file="bootstrap.html" -->
-    <!--#include file="jquery.html" -->
+    <!-- JQuery -->
+    <script type="text/javascript" src="jquery/jquery-1.12.3.min.js"></script>
+
+    <!-- Bootstrap -->
+    <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
+
+    <!-- If I split site into multiple pages, delete "[]" around #include to use SSI for jquery and bootstrap -->
+    <!--[#include] file="jquery.html" -->
+    <!--[#include] file="bootstrap.html" -->
   </body>
 </html>
