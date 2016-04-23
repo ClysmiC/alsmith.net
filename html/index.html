@@ -10,6 +10,19 @@
   </head>
   
   <body>
+
+    <!-- Load bootstrap first so you don't briefly see the ugly, unstyled version. -->
+
+    <!-- Fonts from Google -->
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Titillium+Web">
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="jquery/jquery-1.12.3.min.js"></script>
+
+    <!-- Bootstrap -->
+    <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
+
     <!-- IMAGE ABOVE TABS -->
     <div id="mainNavbar" class="navbar-default navbar-fixed-top"> <!--not REALLY a bootstrap navbar... just borrowing the fixed-top behavior--->
       <div id="andrewImage" class="container-fluid">
@@ -28,7 +41,7 @@
 	  </li>
 	  
 	  <li class="col-md-3">
-	    <a data-toggle="tab" class="skinnyPanel" href="#sampleWorks">Sample Works</a>
+	    <a data-toggle="tab" class="widePanel" href="#sampleWorks">Sample Works</a>
 	  </li>
 	  
 	  <li class="col-md-3">
@@ -99,6 +112,7 @@
 	  <li>C++ (+ mbed)</li>
 	  <li>Processing</li>
 	  <li>Javascript + JQuery</li>
+	  <li>GLSL</li>
 	  <li>SQL</li>
 	  <li>ARM assembly</li>
 	  <li>VHDL</li>
@@ -127,7 +141,7 @@
 	  <li>I love video games. They are a big part of what got me
 	  interested in computers (and subsequently, programming)--I'd
 	  love to work on one professionally one day.</li>
-	  <li>I'm currently undergoing the painful process of learning
+	  <li>I'm currently undergoing the process of learning
 	    Emacs. This site is the first thing I've written using
 	    it.</li>
 	  <li>I'm a die-hard St. Louis Cardinals fan.</li> 
@@ -135,7 +149,7 @@
 	  use <a href="https://en.wikipedia.org/wiki/Indent_style#Allman_style">Allman
 	  style brackets.</a></li>
 	  <li>I do a crossword puzzle almost every day.</li>
-	  <li>I can beat a medium board of minesweeper in under 30 seconds.</li>
+	  <li>I can beat an intermediate board of minesweeper in under 30 seconds.</li>
 	</ul>
 	  <button class="btn center-block btn-primary backToTop">Back to the top</button>
       </div>
@@ -144,14 +158,45 @@
       <!-- SAMPLE WORKS -->
       
       <div class="tab-pane fade in" id="sampleWorks">
-	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-	do eiusmod tempor incididunt ut labore et dolore magna
-	aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-	ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis
-	aute irure dolor in reprehenderit in voluptate velit esse
-	cillum dolore eu fugiat nulla pariatur. Excepteur sint
-	occaecat cupidatat non proident, sunt in culpa qui officia
-	deserunt mollit anim id est laborum.
+	<h2>My Favorite Projects</h2>
+
+	<p>
+	  Lorem ipsum dolor sit amet, consectetur adipiscing
+	  elit. Maecenas eu augue porttitor, consequat purus sed,
+	  facilisis neque. Proin in finibus magna, non auctor
+	  magna. Nulla aliquam gravida tellus ac dictum. Nam at luctus
+	  nunc. Sed sed sodales purus, eu ullamcorper nisl. Quisque a
+	  enim dignissim, fringilla nisl a, mollis arcu. Nulla
+	  placerat hendrerit pretium. Proin mollis leo a nisl porta
+	  tempor. Nulla quis cursus justo.
+	</p>
+
+	<p>
+	  Curabitur molestie erat a urna pulvinar condimentum. Phasellus semper
+	  tortor diam, ut eleifend arcu pulvinar at. Morbi nunc ligula, vehicula
+	  vitae dui eget, accumsan eleifend nulla. Nunc eget efficitur metus. In
+	  hac habitasse platea dictumst. Ut scelerisque semper nibh nec
+	  vehicula. Vivamus scelerisque feugiat diam, sed rhoncus est molestie
+	  quis. Integer suscipit augue vel erat aliquam, non efficitur eros
+	  aliquam.
+	</p>
+	
+	<p>
+	  Cras dictum, nisi sed imperdiet euismod, risus magna fringilla turpis,
+	  pellentesque mollis ligula risus vitae mi. Vivamus ullamcorper
+	  venenatis mi, et bibendum velit auctor quis. Maecenas convallis odio
+	  ac eros maximus congue. Sed tincidunt ante diam, at pretium neque
+	  posuere quis. Suspendisse ultricies arcu et libero finibus
+	  commodo. Suspendisse faucibus vestibulum dignissim. Fusce suscipit,
+	  dui et aliquet maximus, magna nulla ullamcorper justo, at tempor ipsum
+	  eros in purus. Suspendisse potenti. Donec in congue ante, quis
+	  dignissim arcu. Phasellus imperdiet felis vel felis facilisis
+	  pharetra. Sed placerat mauris quis elit cursus, vitae malesuada augue
+	  eleifend. Integer sed tellus vitae felis sagittis imperdiet. Nullam
+	  sagittis erat id arcu semper, eget ullamcorper felis rutrum. Sed
+	  aliquam pulvinar erat eget fermentum. Nullam non suscipit diam. Nam
+	  blandit euismod eros, nec luctus dui pretium quis.
+	</p>
       </div>
 
 
@@ -162,46 +207,26 @@
 	
 	<h4>Updated resume coming soon...</h4>
 
-	<object class="col-xs-12" id="embeddedResume" data="pdf/AndrewSmithResume.pdf"
-	media_type="pdf">Your browser does not support embeded --
-	PDF's. Try a different browser to view my resume, or click the --
-	link below to download</object>
-
-        <p id="downloadPdfText">
-	  If the embedded pdf does not display in your browser
-          properly, you can downloaded it by
-          clicking <a href="pdf/AndrewSmithResume.pdf"
-          download>here.</a>
-	</p>
-        
+	<div class="col-xs-12" id="embeddedResume">
+	  <!-- Javascript embeds resume here -->
+	</div>
+	
       </div>
 
       <div class="tab-pane fade in" id="contactMe">
-	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-	eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-	minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-	aliquip ex ea commodo consequat. Duis aute irure dolor in
-	reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-	pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-	culpa qui officia deserunt mollit anim id est laborum.
+	<h2>Send Me an Email</h2>
+	<h4><a href="mailto:asmith379@gatech.edu">asmith379@gatech.edu</h4>
       </div>
     </div>
     
 </div>
 
-<!-- Fonts from Google -->
-<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Titillium+Web">
-
-<!-- JQuery -->
-<script type="text/javascript" src="jquery/jquery-1.12.3.min.js"></script>
-
-<!-- Bootstrap -->
-<script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
-<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
+<!-- PDFObject -->
+<script type="text/javascript" src="pdfobject/pdfobject.min.js"></script>
 
 
 <!-- My stylesheet -->
-<link rel="stylesheet" type="text/css" href="styles.css">
+<link rel="stylesheet" type="text/css" href="style.css">
 
 <!-- My javascript -->
 <script type="text/javascript" src="scripts.js"></script>
