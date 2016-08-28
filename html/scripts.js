@@ -28,68 +28,71 @@ $(".backToTop").click(function() {
 $('#sampleLink').click(
     function()
     {
-	activateTab('sampleWorks');
+	    tabClicked = true;
+	    window.location.hash = '#samples';
+	    activateTab('sampleWorks');
     }
 );
 
 $('#resumeLink').click(
     function()
     {
-	activateTab('resume');
+	    tabClicked = true;
+	    window.location.hash = '#resume';
+	    activateTab('resume');
     }
 );
 
 $('.nav-tabs .skinnyPanel').on('shown.bs.tab',
     function()
     {
-	setTabContentContainerSkinny();
+	    setTabContentContainerSkinny();
     }
 );
 
 $('.nav-tabs a[href="#aboutMe"]').on('click',
     function()
     {
-	tabClicked = true;
-	window.location.hash = '#about';
+	    tabClicked = true;
+	    window.location.hash = '#about';
     }
 );
 
 $('.nav-tabs a[href="#sampleWorks"]').on('click',
     function()
     {
-	tabClicked = true;
-	window.location.hash = '#samples';
-	
+	    tabClicked = true;
+	    window.location.hash = '#samples';
     }
 );
 
 $('.nav-tabs a[href="#resume"]').on('show.bs.tab',
     function()
     {
-	resizeResumeForViewport();
+	    resizeResumeForViewport();
     }
 );
 
 $('.nav-tabs a[href="#resume"]').on('click',
     function()
     {
-	tabClicked = true;
-	window.location.hash = '#resume';
+	    tabClicked = true;
+	    window.location.hash = '#resume';
     }
 );
 
 $('.nav-tabs a[href="#contactMe"]').on('click',
     function()
     {
-	tabClicked = true;
-	window.location.hash = '#contact';
+	    tabClicked = true;
+	    window.location.hash = '#contact';
     }
 );
 
 $('.nav-tabs .widePanel').on('shown.bs.tab',
     function()
     {
-	setTabContentContainerWide();
+	    setTabContentContainerWide();
     }
 );
 
@@ -101,8 +104,8 @@ window.onhashchange = function ()
 {
     if(tabClicked)
     {
-	tabClicked = false;
-	return;
+	    tabClicked = false;
+	    return;
     }
 
     openPanelBasedOnHash();
@@ -117,12 +120,12 @@ function setTabContentContainerSkinny()
 {
     if(!tabContentContainerIsSkinny)
     {
-	$('#tabContentContainer').removeClass("col-xs-8");
-	$('#tabContentContainer').removeClass("col-xs-offset-2");
-	$('#tabContentContainer').addClass("col-xs-6");
-	$('#tabContentContainer').addClass("col-xs-offset-3");
+	    $('#tabContentContainer').removeClass("col-xs-8");
+	    $('#tabContentContainer').removeClass("col-xs-offset-2");
+	    $('#tabContentContainer').addClass("col-xs-6");
+	    $('#tabContentContainer').addClass("col-xs-offset-3");
 
-	tabContentContainerIsSkinny = true;
+	    tabContentContainerIsSkinny = true;
     }
 }
 
@@ -130,12 +133,12 @@ function setTabContentContainerWide()
 {
     if(tabContentContainerIsSkinny)
     {
-	$('#tabContentContainer').removeClass("col-xs-6");
-	$('#tabContentContainer').removeClass("col-xs-offset-3");
-	$('#tabContentContainer').addClass("col-xs-8");
-	$('#tabContentContainer').addClass("col-xs-offset-2");
+	    $('#tabContentContainer').removeClass("col-xs-6");
+	    $('#tabContentContainer').removeClass("col-xs-offset-3");
+	    $('#tabContentContainer').addClass("col-xs-8");
+	    $('#tabContentContainer').addClass("col-xs-offset-2");
 
-	tabContentContainerIsSkinny = false;
+	    tabContentContainerIsSkinny = false;
     }
 }
 
@@ -149,23 +152,23 @@ function openPanelBasedOnHash()
     // Activate tab after # in URL
     if (window.location.hash === "#about")
     {
-	activateTab('aboutMe');
+	    activateTab('aboutMe');
     }
     else if (window.location.hash === "#samples")
     {
-	activateTab('sampleWorks');
+	    activateTab('sampleWorks');
     }
     else if (window.location.hash === "#resume")
     {
-	activateTab('resume');
+	    activateTab('resume');
     }
     else if (window.location.hash === "#contact")
     {
-	activateTab('contactMe');
+	    activateTab('contactMe');
     }
     else
     {
-	//default
-	activateTab('aboutMe');
+	    //default
+	    activateTab('aboutMe');
     }
 }

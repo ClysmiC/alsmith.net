@@ -3,6 +3,15 @@
     padding-top: 1em;
 }
 
+.project-img
+{
+	width: 80%;
+	display: block;
+	margin: 0 auto;
+
+	padding-bottom: 1em;
+}
+
 #tabBarContainer
 {
     padding-top: 2em;
@@ -31,9 +40,19 @@
     margin-bottom: 3em;
 }
 
+.projectTitle
+{
+    text-decoration: underline;
+}
+
 li
 {
     list-style: disc;
+}
+
+hr
+{
+	border-color: #CCCCCC;
 }
 
 .monospaceFont
