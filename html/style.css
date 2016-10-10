@@ -1,4 +1,4 @@
-#andrewImage
+#andrewImageDiv
 {
     padding-top: 1em;
 }
@@ -12,18 +12,9 @@
 	padding-bottom: 2em;
 }
 
-.embeddedYoutube
-{
-	width: 80%;
-	/* height set with javascript */
-	
-	display: block;
-	margin: 0 auto;
-}
-
 #tabBarContainer
 {
-    padding-top: 2em;
+    padding-top: 1em;
 }
 
 #tabBar

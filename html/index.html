@@ -25,33 +25,32 @@
 
     <!-- IMAGE ABOVE TABS -->
     <div id="mainNavbar" class="navbar-default navbar-fixed-top"> <!--not REALLY a bootstrap navbar... just borrowing the fixed-top behavior--->
-      <div id="andrewImage" class="container-fluid">
-	
-	<!-- img-rounded and col-xs-2 don't play nice when both classes of img, so put the img in a div -->
-	<div class="col-xs-offset-5 col-xs-2">
-	  <img src="img/andrew.jpg" class="img-rounded" alt="Andrew Smith - Programmer">
-	</div>
-      </div>
+	  <div id="andrewImageDiv" class="container-fluid">
+	  	<!-- img-rounded and col-xs-2 don't play nice when both classes of img, so put the img in a div -->
+	  	<div id="andrewImageDiv2" class="col-xs-offset-5 col-xs-2">
+	  	  <img id="andrewImage" src="img/andrew.jpg" class="img-rounded" alt="Andrew Smith - Programmer">
+	  	</div>
+	  </div>
 
       <!-- TABS -->
-      <div id="tabBarContainer" class="container text-center">
-	<ul id="tabBar" class="nav nav-tabs">
-	  <li class="active col-md-3">
-	    <a data-toggle="tab" class="skinnyPanel" href="#aboutMe">About Me</a>
-	  </li>
-	  
-	  <li class="col-md-3">
-	    <a data-toggle="tab" class="widePanel" href="#sampleWorks">Sample Works</a>
-	  </li>
-	  
-	  <li class="col-md-3">
-	    <a data-toggle="tab" class="widePanel" href="#resume">Resume</a>
-	  </li>
-	  
-	  <li class="col-md-3">
-	    <a data-toggle="tab" class="skinnyPanel" href="#contactMe">Contact Me</a>
-	  </li>
-	</ul>
+      <div id="tabBarContainer" class="container-fluid text-center">
+		<ul id="tabBar" class="nav nav-tabs">
+		  <li class="active col-md-3">
+			<a data-toggle="tab" class="skinnyPanel" href="#aboutMe">About Me</a>
+		  </li>
+		  
+		  <li class="col-md-3">
+			<a data-toggle="tab" class="widePanel" href="#sampleWorks">Sample Works</a>
+		  </li>
+		  
+		  <li class="col-md-3">
+			<a data-toggle="tab" class="widePanel" href="#resume">Resume</a>
+		  </li>
+		  
+		  <li class="col-md-3">
+			<a data-toggle="tab" class="skinnyPanel" href="#contactMe">Contact Me</a>
+		  </li>
+		</ul>
       </div>
     </div>
 
@@ -61,110 +60,110 @@
       <!-- ABOUT ME -->
       
       <div class="tab-pane active fade in" id="aboutMe">
-	<h2>Hi, I am Andrew L. Smith - Programmer</h2>
-	
-	<h4>In a hurry? Just read the bold and the bullet points.</h4>
+		<h2>Hi, I am Andrew L. Smith - Programmer</h2>
+		
+		<h4>In a hurry? Just read the bold and the bullet points.</h4>
 
-	<p>
-	  I'm a <strong>22 year-old college student</strong>
-	  from <strong>St. Louis, Missouri</strong>, studying <strong>computer
-	    science</strong> at <strong>Georgia Institute of Technology</strong>. I
-	  started programming when I was 14, learning how to make
-	  simple 2D games with a program called Game Maker. I
-	  started taking CS classes at 16 and have been trying to
-	  learn more ever since. <strong>Most of my work experience is
-	    software development</strong>, but I have been exposed to a lot
-	  more than that in my class and personal
-	  projects-- <span><strong><a id="sampleLink">check them
-		out.</a></strong></span> <!-- span to keep on 1 line -->
-	  Or look
-	  at <span><strong><a href="https://github.com/clysmic">my
-		github!</a></strong></span> I only started using github a few
-	  years ago, so it doesn't have all my projects but I am
-	  trying to add to it as I work on new things!
-	</p>
+		<p>
+		  I'm a <strong>22 year-old college student</strong>
+		  from <strong>St. Louis, Missouri</strong>, studying <strong>computer
+			science</strong> at <strong>Georgia Institute of Technology</strong>. I
+		  started programming when I was 14, learning how to make
+		  simple 2D games with a program called Game Maker. I
+		  started taking CS classes at 16 and have been trying to
+		  learn more ever since. <strong>Most of my work experience is
+			software development</strong>, but I have been exposed to a lot
+		  more than that in my class and personal
+		  projects-- <span><strong><a id="sampleLink">check them
+				out.</a></strong></span> <!-- span to keep on 1 line -->
+		  Or look
+		  at <span><strong><a href="https://github.com/clysmic">my
+				github!</a></strong></span> I only started using github a few
+		  years ago, so it doesn't have all my projects but I am
+		  trying to add to it as I work on new things!
+		</p>
 
-	<hr>
-	
-	<p>
-	  Here is a quick run-down of what <strong>languages I have
-	    worked frequently with</strong>:
-	</p>
-	
-	<ul>
-	  <li>Java (+ Android Programming, + Processing)</li>
-	  <li>C</li>
-	  <li>C++</li>
-	  <li>C#</li>
-	  <li>Python</li>
-	  <li>GLSL</li>
-	  <li>x86 assembly</li>
-	  <li>GML</li>
-	  <li>Javascript (+ JQuery, + Ext JS)</li>
-	  <li>HTML / CSS</li>
-	</ul>
+		<hr>
+		
+		<p>
+		  Here is a quick run-down of what <strong>languages I have
+			worked frequently with</strong>:
+		</p>
+		
+		<ul>
+		  <li>Java (+ Android Programming, + Processing)</li>
+		  <li>C</li>
+		  <li>C++</li>
+		  <li>C#</li>
+		  <li>Python</li>
+		  <li>GLSL</li>
+		  <li>x86 assembly</li>
+		  <li>GML</li>
+		  <li>Javascript (+ JQuery, + Ext JS)</li>
+		  <li>HTML / CSS</li>
+		</ul>
 
-	<p>
-	  <strong>Technologies</strong> that I have used often:
-	</p>
-	
-	<ul>
-	  <li>Windows</li>
-	  <li>Git</li>
-	  <li>Emacs</li>
-	  <li>XNA/MonoGame</li>
-	  <li>Modern OpenGL</li>
-	</ul>
+		<p>
+		  <strong>Technologies</strong> that I have used often:
+		</p>
+		
+		<ul>
+		  <li>Windows</li>
+		  <li>Git</li>
+		  <li>Emacs</li>
+		  <li>XNA/MonoGame</li>
+		  <li>Modern OpenGL</li>
+		</ul>
 
-	<p>
-	  And an assortment of <strong>languages and technologies that I have use
-	  to varying degrees in classes</strong> (but haven't used too
-	  frequently or recently). The higher on this list, the more
-	  comfortable I am with it:
-	</p>
-	
-	<ul>
-	  <li>Linux</li>
-	  <li>SQL</li>
-	  <li>Visual Studio</li>
-	  <li>MSVC</li>
-	  <li>Subversion</li>
-	  <li>Unreal Engine</li>
-	  <li>MIPS assembly</li>
-	  <li>ARM assembly</li>
-	  <li>Windows Batch Scripting</li>
-	  <li>VHDL</li>
-	</ul>
+		<p>
+		  And an assortment of <strong>languages and technologies that I have use
+			to varying degrees in classes</strong> (but haven't used too
+		  frequently or recently). The higher on this list, the more
+		  comfortable I am with it:
+		</p>
+		
+		<ul>
+		  <li>Linux</li>
+		  <li>SQL</li>
+		  <li>Visual Studio</li>
+		  <li>MSVC</li>
+		  <li>Subversion</li>
+		  <li>Unreal Engine</li>
+		  <li>MIPS assembly</li>
+		  <li>ARM assembly</li>
+		  <li>Windows Batch Scripting</li>
+		  <li>VHDL</li>
+		</ul>
 
-	<p>
-	  For a better picture of my skill-set, check
-	  out <span><strong><a id="resumeLink">my
-	  resume.</a></strong></span>
-	</p>
+		<p>
+		  For a better picture of my skill-set, check
+		  out <span><strong><a id="resumeLink">my
+				resume.</a></strong></span>
+		</p>
 
-	<hr>
+		<hr>
 
-	<p>
-	  Lastly, here are some <strong>random things</strong> about
-	  me that may or may not be of interest:
-	</p>
-	
-	<ul>
-	  <li>I played baseball for 11 years. After that, I umpired
-	    for 5.</li>
-	  <li>I've been using the Dvorak keyboard since 2007.</li>
-	  <li>I can
-	  eat <a href="https://en.wikipedia.org/wiki/Saltine_cracker_challenge">six
-	      saltines in a minute.</a></li>
-	  <li>I love video games. They are a big part of what got me
-	  interested in computers (and subsequently, programming)--I'd
-	  love to work on one professionally one day.</li>
-	  <li>I use emacs!</li>
-	  <li>I'm a die-hard St. Louis Cardinals fan.</li> 
-	  <li>I do a crossword puzzle almost every day.</li>
-	  <li>I can beat an intermediate board of minesweeper in under 30 seconds.</li>
-	</ul>
-	  <button class="btn center-block btn-primary backToTop">Back to the top</button>
+		<p>
+		  Lastly, here are some <strong>random things</strong> about
+		  me that may or may not be of interest:
+		</p>
+		
+		<ul>
+		  <li>I played baseball for 11 years. After that, I umpired
+			for 5.</li>
+		  <li>I've been using the Dvorak keyboard since 2007.</li>
+		  <li>I can
+			eat <a href="https://en.wikipedia.org/wiki/Saltine_cracker_challenge">six
+			  saltines in a minute.</a></li>
+		  <li>I love video games. They are a big part of what got me
+			interested in computers (and subsequently, programming)--I'd
+			love to work on one professionally one day.</li>
+		  <li>I use emacs!</li>
+		  <li>I'm a die-hard St. Louis Cardinals fan.</li> 
+		  <li>I do a crossword puzzle almost every day.</li>
+		  <li>I can beat an intermediate board of minesweeper in under 30 seconds.</li>
+		</ul>
+		<button class="btn center-block btn-primary backToTop">Back to the top</button>
       </div>
 
 
@@ -174,10 +173,10 @@
 	    <h2>My Favorite Projects</h2>
 
         <p>A selection of some of my favorite school and personal
-        projects that I have worked on, with links to source code
-        included. Most of the source code for these projects (among
-        others) is on <a href="https://github.com/ClysmiC">my
-        github</a>.</p>
+          projects that I have worked on, with links to source code
+          included. Most of the source code for these projects (among
+          others) is on <a href="https://github.com/ClysmiC">my
+			github</a>.</p>
 
 		<h3 class="projectTitle">3D Puzzle Platformer (WIP)</h3>
 
@@ -217,7 +216,7 @@
         <p>
           A library written in <strong>C++</strong> that allows
           an <a href="https://developer.mbed.org/platforms/mbed-LPC1768/">mbed
-          LPC1768 microcontroller</a> to use a Nintendo 64 controller
+			LPC1768 microcontroller</a> to use a Nintendo 64 controller
           as an input device. I wrote the source code that runs on the mbed itself, while my project partner wrote the code to interface between the PC and the mbed and display the buttons that are pressed.
 
           <ul>
@@ -278,7 +277,7 @@
           using <a href="https://processing.org/"><strong>Processing</strong>.</a>
           Scenes were read in from .cli files using a format specified
           by <a href="pdf/raytracer.pdf">the assignment
-          description</a>, and rendered via ray tracing. The ray
+			description</a>, and rendered via ray tracing. The ray
           tracer can render triangles and spheres, and supports
           shadows, reflections, and diffuse, ambient, and specular
           lighting.
@@ -307,7 +306,7 @@
             <li><a href="https://github.com/ClysmiC/CSub/">Source Code</a></li>
           </ul>
           
-          <p>I wrote this code before I knew anything about best
+        <p>I wrote this code before I knew anything about best
           software practices. If I were to write it today, I would
           never tie that much functionality to the various interface
           components. However, I include it on this page because it is
@@ -324,19 +323,19 @@
       <!-- RESUME -->
       
       <div class="tab-pane fade in" id="resume">
-	<h2>My Resume</h2>
-	
-	<h4>Last updated September 2016</h4>
+		<h2>My Resume</h2>
+		
+		<h4>Last updated September 2016</h4>
 
-	<div class="col-xs-12" id="embeddedResume">
-	  <!-- Javascript embeds resume here -->
-	</div>
-	
+		<div class="col-xs-12" id="embeddedResume">
+		  <!-- Javascript embeds resume here -->
+		</div>
+		
       </div>
 
       <div class="tab-pane fade in" id="contactMe">
-	<h2>Send Me an Email</h2>
-	<h4><a href="mailto:asmith379@gatech.edu">asmith379@gatech.edu</h4>
+		<h2>Send Me an Email</h2>
+		<h4><a href="mailto:asmith379@gatech.edu">asmith379@gatech.edu</h4>
       </div>
     </div>
     

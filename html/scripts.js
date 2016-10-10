@@ -1,6 +1,36 @@
 tabContentContainerIsSkinny = true;
 tabClicked = false;
 
+//
+// Hide image when scrolling down
+//
+andrewImageStartSize = 153; // hard coded to what it is on my browser... gets updated when window ready
+
+$(document).ready(function(){
+    $(window).load(function(){
+		andrewImageStartSize = parseInt($('#andrewImage').css('height'));
+    });
+});
+
+$(window).scroll(function() {
+	var offset = Math.max($(document).scrollTop(), 0);
+	if(offset === 0)
+	{
+		// when its zero the curved corners break... so we need
+		// another idiotic css hack
+		$('#andrewImageDiv2').css('height', "");
+		$('#andrewImageDiv2').css('top', "");
+	}
+	else
+	{
+		$('#andrewImageDiv2').css('height', andrewImageStartSize - offset);
+		$('#andrewImageDiv2').css('top', -offset);
+	}
+});
+
+
+
+
 // Use PDFObject to embed PDF properly
 // Make its height comfortably fit in the viewport
 PDFObject.embed("pdf/AndrewSmithResume.pdf", "#embeddedResume");
