@@ -67,7 +67,7 @@ $('#sampleLink').click(
     }
 );
 
-$('#resumeLink').click(
+$('.resumeLink').click(
     function()
     {
 	    tabClicked = true;
