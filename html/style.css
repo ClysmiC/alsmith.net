@@ -5,11 +5,22 @@
 
 .project-img
 {
-	width: 80%;
+	width: 60%;
 	display: block;
 	margin: 0 auto;
 
+	padding-top: 2em;
 	padding-bottom: 2em;
+}
+
+.project-vid
+{
+	width: 720px;
+	height: 480px;
+	float: none;
+	clear: both;
+	display: block;
+	margin: 0 auto;
 }
 
 #tabBarContainer
@@ -48,6 +59,19 @@
 li
 {
     list-style: disc;
+}
+
+.card
+{
+	padding-left: 3em;
+	padding-right: 3em;
+	background: #EEEEEE;
+	border-radius: 10px;
+}
+
+.collapse.in
+{
+	padding-bottom: 1em;
 }
 
 hr

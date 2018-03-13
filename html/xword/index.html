@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>xword - collaborative crossword</title>
+
+	<link rel="stylesheet" type="text/css" href="xxword.css">
+  </head>
+  <body>
+	
+	<canvas id="xword" width="600" height="600">xxword requires an HTML5-compatible browser that supports the &lt;canvas&gt; tag.</canvas>
+
+	<div id="interface">
+	  <div id="topI">
+
+		<div id="colorPickContainer" class="interfaceContainer">
+		  <div id="colorPickerButton"></div>
+		</div>
+
+		<div id="revealContainer" class="interfaceContainer">
+		  <img id="reveal" src="q.png">
+		</div>
+
+		<div id="roomCodeContainer" class="interfaceContainer">
+		  <label id="roomCode">Room: TEST</label>
+		</div>
+
+		<div id="hintContainer" class="interfaceContainer">
+		  <label id="hintLabel">Hints</label>
+		  
+		  <label class="switch">
+			<input id="hintToggle" type="checkbox">
+			<div class="slider round"></div>
+		  </label>
+		</div>
+	  </div>
+	  
+	  <div id="clues">
+		<div id="acrossClues" class="clues unselectable">
+		  <strong class="clueHeader">ACROSS</strong>
+
+		  <br>
+
+		  <div id="acrossList" class="clueList">
+		  </div>
+		</div>
+
+		<div id="downClues" class="clues unselectable">
+		  <strong class="clueHeader">DOWN</strong>
+
+		  <br>
+		  
+		  <div id="downList" class="clueList">
+		  </div>
+		</div>		
+	  </div>
+	</div>
+
+	<a id="devShortcut" href="http://cdn.games.arkadiumhosted.com/latimes/assets/DailyCrossword/la161219.xml">Dev shortcut</a>
+
+
+
+	<!-- HIDDEN TOOLTIPS ETC. -->
+	<div id="revealOptions">
+	  <div id="revealLetter" class="revealOption">Reveal Letter</div>
+	  <div id="revealWord" class="revealOption">Reveal Word</div>
+	  <div id="revealPuzzle" class="revealOption">Reveal Puzzle</div>
+	</div>
+
+	<div id="colorPicker">
+	  <div class="colorSample" data-index="0"></div>
+	  <div class="colorSample" data-index="1"></div>
+	  <div class="colorSample" data-index="2"></div>
+	  <div class="colorSample" data-index="3"></div>
+	  <div class="colorSample" data-index="4"></div>
+	  <div class="colorSample" data-index="5"></div>
+	  <div class="colorSample" data-index="6"></div>
+	  <div class="colorSample" data-index="7"></div>
+	</div>
+
+	<script src="xxword.js"></script>
+  </body>
+</html>

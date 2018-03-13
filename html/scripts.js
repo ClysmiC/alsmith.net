@@ -12,7 +12,9 @@ $(document).ready(function(){
     });
 });
 
-$(window).scroll(function() {
+function handleScroll() {
+	if (document.readyState !== "complete") return;
+	
 	var offset = Math.max($(document).scrollTop(), 0);
 	if(offset === 0)
 	{
@@ -26,9 +28,9 @@ $(window).scroll(function() {
 		$('#andrewImageDiv2').css('height', andrewImageStartSize - offset);
 		$('#andrewImageDiv2').css('top', -offset);
 	}
-});
-
-
+}
+	
+$(window).scroll(handleScroll);
 
 
 // Use PDFObject to embed PDF properly
@@ -42,6 +44,7 @@ $(window).resize(function () {
 
 $(window).load(function () { 
     $('#tabContentContainer').css('padding-top', parseInt($('#mainNavbar').css("height"))+10);
+	handleScroll();
 });
 
 $(document).ready(function () {

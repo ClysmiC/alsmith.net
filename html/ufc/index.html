@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>UFC Info Viz</title>
+        <script type="text/javascript" src="d3/d3.js"></script>
+
+        <link rel="stylesheet" type="text/css" href="ufc-viz.css">
+    </head>
+
+
+    <body>
+	  <div id="header" class="arialText">
+		<h3 id="title">UFC Matchups Visualized</h3>
+		<div>
+		  <span id="search">
+			<input id="searchName" type="text" placeholder="Search By Name">
+			<button id="searchSubmit" type="button">Search</button>
+		  </span>
+		  
+		  <p id="subtitle" class="arialText">Includes fighters with >= <span id='mfc'>[count]</span> recorded fights
+		  	<span>
+			  <button id="minus" type="button">-</button>
+			  <button id="plus" type="button">+</button>
+			</span>
+		  </p>
+		</div>
+	  </div>
+
+	  <!-- Loading spinner -->
+	  <div id="spinner" style="visibility:hidden;" class="sk-circle">
+		<div class="sk-circle1 sk-child"></div>
+		<div class="sk-circle2 sk-child"></div>
+		<div class="sk-circle3 sk-child"></div>
+		<div class="sk-circle4 sk-child"></div>
+		<div class="sk-circle5 sk-child"></div>
+		<div class="sk-circle6 sk-child"></div>
+		<div class="sk-circle7 sk-child"></div>
+		<div class="sk-circle8 sk-child"></div>
+		<div class="sk-circle9 sk-child"></div>
+		<div class="sk-circle10 sk-child"></div>
+		<div class="sk-circle11 sk-child"></div>
+		<div class="sk-circle12 sk-child"></div>
+	  </div>
+	  
+	  <div class="chart">
+	  </div>
+	  
+        <!-- Execute script -->
+        <script type="text/javascript" src="ufc-viz.js"></script>
+    </body>
+</html>
+
