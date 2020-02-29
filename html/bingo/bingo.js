@@ -1,420 +1,1007 @@
-var possibleGoals;
-var validTags;
-var goalsByDifficulty;
-var cellGoals = [];
-var goalOrder = [];
+﻿// TODO: Debug Row 5 of seed 860446880 ... there are 4 translate text goals? Are the tags set up properly?
+//	Or do we have a bug?
 
-var averageDifficulty;
-var difficultyStdDev;
+// TODO: Inline counters for goals with X subtasks
+// TODO: Double click a header for a popout (a la SRL)
 
 function assert(value) {
 	if (!value) {
 		debugger;
-		alert("ASSERTION FAILED. Someone has some debugging to do...");
+		alert("Assertion failed. Please contact @ClysmiC11 on Twitter with this card's seed so he can debug!");
 	}
 }
 
-function init() {
-	let seed;
+function getRandomSeed(difficulty) {
+	// NOTE: We only get a seed from 0 - a hundred million because we are going to append
+	//	a difficulty suffix. Which puts us up to a max of a billion, which is fine for an s32.
 
-	// Check URL for random seed. If none exists or invalid, generate one and redirect
-	// to the page with the seed as the query param
-	if(location.href.includes("?seed=")) {
-		let seedIndex = location.href.indexOf("?seed=");
-		seedIndex += "?seed=".length;
+	let generatedSeed = Math.floor(Math.random() * 100000000);
 
-		seed = parseInt(location.href.slice(seedIndex));
+	if (difficulty === "Easy") {
+		generatedSeed += g_suffixEasy;
+	}
+	else if (difficulty === "Hard") {
+		generatedSeed += g_suffixHard;
 	}
 	else {
-		let generatedSeed = Math.floor(Math.random() * 1000000000);
-		location.href = "?seed=" + generatedSeed;  // REDIRECT
+		generatedSeed += g_suffixNormal;
+	}
+
+	return generatedSeed;
+}
+
+function shorthandLookup(strShort) {
+	for (let i = 0; i < manifest.shorthands.length; i++) {
+		if (manifest.shorthands[i].short === strShort) {
+			return manifest.shorthands[i].long;
+		}
+	}
+
+	return "";
+}
+
+function htmlFromStringWithShorthands(str) {
+	let iLBrack = -1;
+	let iRBrack = -1;
+	let result = "";
+
+	for (let i = 0; i < str.length; i++) {
+		let c = str[i];
+
+		if (c === "[") {
+			iLBrack = i;
+		}
+		else if (c === "]") {
+			iRBrack = i;
+
+			if (iLBrack !== -1) {
+				let strShort = str.substring(iLBrack + 1, iRBrack);
+				result += "<span class='ttCrumb'>" + strShort + "<span class='ttText'>" + shorthandLookup(strShort) + "</span></span>";
+				iLBrack = -1;
+				iRBrack = -1;
+			}
+		}
+		else if (iLBrack === -1) {
+			result += c;
+		}
+	}
+
+	return result;
+}
+
+function htmlFromGoal(goal) {
+	let result = htmlFromStringWithShorthands(goal.text);
+
+	if (goal.alt !== "") {
+		result += " <span class='ttCrumb'>[?]<span class='ttText'>" + htmlFromStringWithShorthands(goal.alt) + "</span></span>";
+	}
+
+	//<button id="btnNewHardCard" class="btnNewCard">
+
+	let row = goal.cell.row;
+	let col = goal.cell.col;
+	let btnMinusId = "btnTrackerMinus" + row + "_" + col;
+	let btnPlusId = "btnTrackerPlus" + row + "_" + col;
+	let txtTrackerId = "txtTracker" + row + "_" + col;
+
+	if (goal.track) {
+		result +=	'<br>';
+		result +=	'<div class="panelTracker">';
+		result +=		'<button id="' + btnMinusId + '" class="btnTrackerMinus">-</button>';
+		result +=		'<span id="' + txtTrackerId + '" class="txtTracker">0</span>';
+		result +=		'<button id="' + btnPlusId + '" class="btnTrackerPlus">+</button>';
+		result +=	'</div>';
+	}
+
+	return result;
+}
+
+function initSeed() {
+	// Get random seed from URL or generate one
+
+	if (window.location.href.includes("?seed=")) {
+		let seedIndex = window.location.href.indexOf("?seed=");
+		seedIndex += "?seed=".length;
+
+		let seedString = window.location.href.substring(seedIndex);
+
+		// TODO: Verify this parseInt succeeds?
+		// TODO: Handle empty string?
+
+		seedRng(parseInt(seedString));
+
+		if (seedString.charAt(seedString.length - 1) === g_suffixEasy) {
+			g_difficulty = "Easy";
+		}
+		else if ((seedString.charAt(seedString.length - 1) === g_suffixHard)) {
+			g_difficulty = "Hard";
+		}
+
+		// Make the difficulty text correct
+
+		let spanDifficulty = document.getElementById("spanDifficulty");
+		spanDifficulty.innerText = g_difficulty;
+	}
+	else {
+		// NOTE (this performs a redirect)
+
+		window.location.replace(window.location.href + "?seed=" + getRandomSeed("Normal"));
 		return;
 	}
+}
 
-	// set cell height to the width
-	// width was determined by css
-	let minDimension = 400;
-	let maxDimension = 800;
+function initLayout() {
 
-	let dimension = 0.7 * Math.min(window.innerWidth, window.innerHeight);
-	dimension = Math.max(minDimension, dimension);
-	dimension = Math.min(maxDimension, dimension);
+	// Set cell size
 
-	let cellDimension = dimension / 5.0;
+	{
+		let dimension = 0.7 * Math.min(window.innerWidth, window.innerHeight);
+		dimension = Math.max(500, dimension);
+		// dimension = Math.min(800, dimension);
 
-	$("td").each(function() {
-		$(this).width(cellDimension);
-		$(this).height(cellDimension);
-	});
+		let cellDimension = dimension / 5.0;
 
-	// Adjust right panel so it is aligned properly
-	let cardHeight = $("#cardPanel").height();
-	$("#rightPanel").height(cardHeight + 0.5 * (window.innerHeight - cardHeight));
-	$("#rightPanel").width(window.innerWidth - $("#cardPanel").width() - 50);
-
-	// If about text runs too low, hide the credits text so there isn't overlap
-	if ($("#aboutText").offset().top + $("#aboutText").outerHeight(true) >
-		$("#cardPanel").offset().top + $("#cardPanel").outerHeight(true)) {
-		$("#creditText").hide();
+		let cells = document.getElementsByTagName("td");
+		for (let i = 0; i < cells.length; i++) {
+			cells[i].style.width = cellDimension + "px";
+			cells[i].style.height = cellDimension + "px";
+		}
 	}
 
-	initGoals(seed);
+	// Resize right panel
 
-	function getCellsForHeader(headerId) {
-		let cells = [];
+	let panelCard = document.getElementById("panelCard");
+	let panelRight = document.getElementById("panelRight");
 
-		if(headerId === "tlbr") {
-			cells.push($("#0_0"));
-			cells.push($("#1_1"));
-			cells.push($("#2_2"));
-			cells.push($("#3_3"));
-			cells.push($("#4_4"));
-		}
-		else if(headerId === "bltr") {
-			cells.push($("#4_0"));
-			cells.push($("#3_1"));
-			cells.push($("#2_2"));
-			cells.push($("#1_3"));
-			cells.push($("#0_4"));
-		}
-		else if (headerId.startsWith("col")) {
-			let col = headerId.slice(-1);
-			col = parseInt(col) - 1;
+	panelRight.style.height = panelCard.offsetHeight + 0.5 * (window.innerHeight - panelCard.offsetHeight) + "px";
+	panelRight.style.width = (window.innerWidth - panelCard.offsetWidth - 50) + "px";
+}
 
-			for (let i = 0; i < 5; i++) {
-				cells.push($("#" + i + "_" + col));
+function initHandlers() {
+
+	// Initialize new card button
+
+	let btns = document.getElementsByClassName("btnNewCard");
+	for (let iBtn = 0; iBtn < btns.length; iBtn++) {
+		let btn = btns[iBtn];
+		btn.addEventListener("click", function (event) {
+			let locationSubstring = window.location.href;
+			if (window.location.href.includes("?seed=")) {
+				locationSubstring = locationSubstring.substring(0, window.location.href.indexOf("?seed="));
 			}
-		}
-		else if (headerId.startsWith("row")) {
-			let row = headerId.slice(-1);
-			row = parseInt(row) - 1;
 
-			for (let i = 0; i < 5; i++) {
-				cells.push($("#" + row + "_" + i));
+			let difficultySelected = "Normal";
+			if (event.target.id === "btnNewEasyCard") {
+				difficultySelected = "Easy";
 			}
-		}
-		else {
-			assert(false);
-		}
-
-		assert(cells.length === 5);
-		return cells;
-	}
-
-	function getGoalsForHeader(headerId) {
-		let goals = [];
-
-		if(headerId === "tlbr") {
-			goals.push(cellGoals[0][0]);
-			goals.push(cellGoals[1][1]);
-			goals.push(cellGoals[2][2]);
-			goals.push(cellGoals[3][3]);
-			goals.push(cellGoals[4][4]);
-		}
-		else if(headerId === "bltr") {
-			goals.push(cellGoals[4][0]);
-			goals.push(cellGoals[3][1]);
-			goals.push(cellGoals[2][2]);
-			goals.push(cellGoals[1][3]);
-			goals.push(cellGoals[0][4]);
-		}
-		else if (headerId.startsWith("col")) {
-			let col = headerId.slice(-1);
-			col = parseInt(col) - 1;
-
-			for (let i = 0; i < 5; i++) {
-				goals.push(cellGoals[i][col]);
+			else if (event.target.id === "btnNewHardCard") {
+				difficultySelected = "Hard";
 			}
-		}
-		else if (headerId.startsWith("row")) {
-			let row = headerId.slice(-1);
-			row = parseInt(row) - 1;
-
-			for (let i = 0; i < 5; i++) {
-				goals.push(cellGoals[row][i]);
+			else {
+				assert(event.target.id === "btnNewNormalCard");
 			}
-		}
-		else {
-			assert(false);
-		}
 
-		assert(goals.length === 5);
-		return goals;
-	}
+			// NOTE (this performs a redirect)
 
-	function setGoal(row, col, goal) {
-		assert(row != null);
-		assert(col != null);
-		
-		let id = row + "_" + col;
-		let cell = $("#" + id);
-		
-		let oldGoal = cellGoals[row][col];
-		if (oldGoal != null) {
-			oldGoal.row = null;
-			oldGoal.col = null;
-		}
-		
-		cell.text(goal.description);
-		cell.prop("title", goal.tooltip);
-		
-		cellGoals[row][col] = goal;
-		goal.row = row;
-		goal.col = col;
+			window.location.replace(locationSubstring + "?seed=" + getRandomSeed(difficultySelected));
+			return;
+		});
 	}
 
 	// Initialize row/column headers
-	$("th").each(function() {
-		$(this).on("mouseenter", function() {
-			let cells = getCellsForHeader($(this).attr("id"));
 
-			for (let i = 0; i < cells.length; i++) {
-				let cell = cells[i];
-				cell.addClass("fakeHover");
-			}
-		});
+	function cellsFromHeaderId(headerId) {
+		let cells = [];
 
-		$(this).on("mouseout", function() {
-			let cells = getCellsForHeader($(this).attr("id"));
+		if (headerId === "tlbr") {
+			cells.push(document.getElementById("0_0"));
+			cells.push(document.getElementById("1_1"));
+			cells.push(document.getElementById("2_2"));
+			cells.push(document.getElementById("3_3"));
+			cells.push(document.getElementById("4_4"));
+		}
+		else if (headerId === "bltr") {
+			cells.push(document.getElementById("4_0"));
+			cells.push(document.getElementById("3_1"));
+			cells.push(document.getElementById("2_2"));
+			cells.push(document.getElementById("1_3"));
+			cells.push(document.getElementById("0_4"));
+		}
+		else if (headerId.startsWith("col")) {
+			let col = headerId.slice(-1);
+			col = parseInt(col) - 1;
 
-			for (let i = 0; i < cells.length; i++) {
-				let cell = cells[i];
-				cell.removeClass("fakeHover");
-			}
-		});
-	});
-
-	let goalIndex = 0;
-
-
-	// Grabs a random, available goal
-	function nextGoal() {
-		// Just grab the next available goal
-		while(true) {
-			let goal = possibleGoals[goalOrder[goalIndex]];
-			goalIndex = (goalIndex + 1) % possibleGoals.length;
-
-			if (goal.row == null) {
-				return goal;
+			for (let i = 0; i < 5; i++) {
+				cells.push(document.getElementById(i + "_" + col));
 			}
 		}
+		else if (headerId.startsWith("row")) {
+			let row = headerId.slice(-1);
+			row = parseInt(row) - 1;
+
+			for (let i = 0; i < 5; i++) {
+				cells.push(document.getElementById(row + "_" + i));
+			}
+		}
+		else {
+			assert(false);
+		}
+
+		return cells;
 	}
 
-	// Finds the goal with difficulty closest to the specified parameter,
-	// that legally fits in the specified row/column considering legal tag combinations
-	function replaceGoal(row, col, difficulty) {
-		if (difficulty < 1) {
-			difficulty = 1;
-		}
-		if (difficulty > goalsByDifficulty.length) {
-			difficulty = goalsByDifficulty.length;
-		}
+	let headerSelected = null;
+	let headers = document.getElementsByTagName("th");
+	for (let i = 0; i < headers.length; i++) {
+		let cells = cellsFromHeaderId(headers[i].id);
 
-		let i = 0;
-		while (true) {
-			i++;
+		headers[i].addEventListener("mouseenter", function () {
+			for (let i = 0; i < cells.length; i++) {
+				cells[i].classList.add("fakeHover");
+			}
+		});
 
-			let newGoalDifficulty;
+		headers[i].addEventListener("mouseout", function () {
+			for (let i = 0; i < cells.length; i++) {
+				cells[i].classList.remove("fakeHover");
+				cells[i].classList.remove("preselected");
+			}
+		});
 
-			// check for same difficulty, then +1, then -1, then +2, then -2, ...
-			if (i % 2 === 0) {
-				newGoalDifficulty = difficulty + Math.floor(i / 2);
+		headers[i].addEventListener("mousedown", function () {
+			for (let i = 0; i < cells.length; i++) {
+				cells[i].classList.add("preselected");
+			}
+		});
+
+		headers[i].addEventListener("mouseup", function () {
+			for (let i = 0; i < cells.length; i++) {
+				cells[i].classList.remove("preselected");
+			}
+		});
+
+		headers[i].addEventListener("click", function () {
+			if (headerSelected !== null) {
+
+				assert(headerSelected.classList.contains("selected"));
+				headerSelected.classList.remove("selected");
+
+				let cellsPrev = cellsFromHeaderId(headerSelected.id);
+				for (let i = 0; i < cellsPrev.length; i++) {
+					cellsPrev[i].classList.remove("selected");
+				}
+			}
+
+			if (headerSelected === this) {
+				headerSelected = null;
 			}
 			else {
-				newGoalDifficulty = difficulty - Math.floor(i / 2);
-			}
+				headerSelected = this;
 
-			if (newGoalDifficulty <= 0 || newGoalDifficulty >= goalsByDifficulty.length) {
-				continue;
-			}
-			
-			for (let j = 0; j < goalsByDifficulty[newGoalDifficulty].length; j++) {
-				let goal = goalsByDifficulty[newGoalDifficulty][j];
+				assert(!headerSelected.classList.contains("selected"));
+				headerSelected.classList.add("selected");
 
-				if (goal.row == null) {
-					let goals = [];
-
-					// Unused goal found. Now verify it is legal in context.
-
-					let rowGoals = getGoalsForHeader("row" + (row + 1));
-					goals = goals.concat(rowGoals);
-
-					let colGoals = getGoalsForHeader("col" + (col + 1));
-					goals = goals.concat(colGoals);
-
-					if (row === col) {
-						let tlbrGoals = getGoalsForHeader("tlbr");
-						goals = goals.concat(tlbrGoals);
-					}
-
-					if (row + col === 4) {
-						let bltrGoals = getGoalsForHeader("bltr");
-						goals = goals.concat(bltrGoals);
-					}
-
-					let isValid = true;
-
-					for (let k = 0; k < goals.length; k++) {
-						let otherGoal = goals[k];
-
-						if (otherGoal.row === row && otherGoal.col === col) {
-							continue;  // this is the goal being replaced
-						}
-
-						if (!isAllowed(goal, otherGoal)) {
-							isValid = false;
-							break;
-						}
-					}
-
-					if (isValid) {
-						return goal;
-					}
+				for (let i = 0; i < cells.length; i++) {
+					cells[i].classList.add("selected");
 				}
 			}
-		}
+		});
 	}
 
-	// Initialize each cell
-	for(let i = 0; i < 5; i++) {
-		cellGoals.push([]);
-		
-		for(let j = 0; j < 5; j++) {
-			let goal = nextGoal();
-			setGoal(i, j, goal);
-			
-			let id = i + "_" + j;
-			let cell = $("#" + id);
-			cell.on("click", function() {
-				if ($(this).hasClass("greenCell")) {
-					$(this).addClass("redCell");
-					$(this).removeClass("greenCell");
+	// Init click listener for goals
+
+	let goalCells = [];
+	for (let i = 0; i < 5; i++) {
+		goalCells.push([]);
+
+		for (let j = 0; j < 5; j++) {
+			let cell = document.getElementById(i + "_" + j);
+			cell.addEventListener("click", function () {
+				if (this.classList.contains("greenCell")) {
+					this.classList.add("redCell");
+					this.classList.remove("greenCell");
 				}
-				else if ($(this).hasClass("redCell")) {
-					$(this).removeClass("redCell");
+				else if (this.classList.contains("redCell")) {
+					this.classList.remove("redCell");
 				}
 				else {
-					$(this).addClass("greenCell");
+					this.classList.add("greenCell");
 				}
 			});
 		}
 	}
 
-	let nothingChanged;
-	let iterations = 0;
-	let headers = ["row1", "row2", "row3", "row4", "row5", "col1", "col2", "col3", "col4", "col5", "tlbr", "bltr"];
-	let lowDifficultyLimit = Math.floor(5 * averageDifficulty - Math.sqrt(5 * difficultyStdDev));
-	let highDifficultyLimit = Math.ceil(5 * averageDifficulty + 1.2 * Math.sqrt(5 * difficultyStdDev));  // give a litle more leeway on the harder side :)
-	
-	do {
-		nothingChanged = true;
+	// Init click listener for inline tracker buttons
 
-		let dbg_msg = "";
-		for (let i = 0; i < headers.length; i++) {
-			let header = headers[i];
-			let goals = getGoalsForHeader(header);
-			let evaluation = evaluateRow(goals);
+	let minusButtons = document.getElementsByClassName("btnTrackerMinus");
+	for (let iBtn = 0; iBtn < minusButtons.length; iBtn++) {
+		let btn = minusButtons[iBtn];
+		btn.addEventListener("click", function (event) {
+			let btnClicked = event.target;
+			let rowColId = btnClicked.id.substring("btnTrackerMinus".length);
 
-			dbg_msg += header + ": " + evaluation.totalDifficulty;
+			let textDom = document.getElementById("txtTracker" + rowColId);
+			let counterValue = parseInt(textDom.innerText);
+			counterValue = Math.max(counterValue - 1, 0);
 
-			if (evaluation.ruleBreakers.length > 0) {
-				dbg_msg += " (INVALID)";
+			textDom.innerText = counterValue.toString();
+
+			event.stopPropagation();
+		});
+	}
+
+	let plusButtons = document.getElementsByClassName("btnTrackerPlus");
+	for (let iBtn = 0; iBtn < plusButtons.length; iBtn++) {
+		let btn = plusButtons[iBtn];
+		btn.addEventListener("click", function (event) {
+			let btnClicked = event.target;
+			let rowColId = btnClicked.id.substring("btnTrackerPlus".length);
+
+			let textDom = document.getElementById("txtTracker" + rowColId);
+			let counterValue = parseInt(textDom.innerText);
+
+			// NOTE (andrew) This wraps around at 9, which I think is a good design decision since we don't
+			//	have a "reset to 0" button. Might need to change this if we ever have a goal that makes you
+			//	do 10 things!
+
+			if (counterValue === 9) {
+				counterValue = 0;
+			}
+			else {
+				counterValue++;
 			}
 
-			dbg_msg += "\n";
-		}
+			textDom.innerText = counterValue.toString();
 
-		// DEV
-		console.log(dbg_msg);
+			event.stopPropagation();
+		});
+	}
 
-		for (let i = 0; i < headers.length; i++) {
-			let header = headers[i];
-			let goals = getGoalsForHeader(header);
-			let evaluation = evaluateRow(goals);
+	// Recalculate layout on window resize
 
-			if (evaluation.ruleBreakers.length > 0) {
-				for (let j = 0; j < evaluation.ruleBreakers.length; j++) {
-					let goal1 = evaluation.ruleBreakers[j][0];
-
-					if (goal1.row == null) {
-						// was involved in a prior rule break that was
-						// already resolved!
-						continue;
-					}
-
-					let row = goal1.row;
-					let col = goal1.col;
-					newGoal = replaceGoal(row, col, goal1.difficulty);
-					setGoal(row, col, newGoal);
-				}
-				
-				nothingChanged = false;
-			}
-			else if(evaluation.totalDifficulty < lowDifficultyLimit ||
-					evaluation.totalDifficulty > highDifficultyLimit) {
-
-				// our new target should be *slightly* higher than average, because
-				// we can expect goal synergies to bring it down
-				let midDifficulty = (lowDifficultyLimit + highDifficultyLimit) / 2;
-				let targetCombinedDifficulties = midDifficulty + 5;
-
-				// try to distribute the increase across the whole row so it doesn't
-				// mess up a perpendicular row
-				let deltaPerCell = Math.round((targetCombinedDifficulties - evaluation.totalDifficulty) / 5);
-
-				if (deltaPerCell === 0) {
-					if(evaluation.totalDifficulty < lowDifficultyLimit) { deltaPerCell = 1; }
-					else { deltaPerCell = -1; }
-				}
-
-				// we won't always be able to increase by deltaPerCell, so this accumulates
-				// how inaccurate our increases are, and our future increases will take it into account
-				let accumulatedError = 0;
-				for (let j = 0; j < 5; j++) {
-					let goal = goals[j];
-					let row = goal.row;
-					let col = goal.col;
-					
-					let targetDifficulty = goal.difficulty + deltaPerCell - accumulatedError;
-					
-					let newGoal = replaceGoal(row, col, targetDifficulty);
-					setGoal(row, col, newGoal);
-
-					accumulatedError = newGoal.difficulty - targetDifficulty;
-				}
-				
-				nothingChanged = false;
-			}
-		}
-
-		iterations += 1;
-		console.log("Iteration " + iterations);
-
-	} while (!nothingChanged && iterations <= 50)
-
-	// Show the cells once they are finalized
-	$("td").css("visibility", "visible");
-
-	// Initialize new card button
-	$("#newCardBtn").on("click", function() {
-		let generatedSeed = Math.floor(Math.random() * 1000000000);
-		location.href = "?seed=" + generatedSeed;  // REDIRECT
-	});
-
-	// enable qtip for better tooltips
-	$('[title!=""]').qtip({
-		position: {
-			target: 'mouse',
-			adjust: {
-				mouse: false
-			},
-		},
-
-		show: { delay: 1000 },
-
-		hide: { when: { event:'mouseout unfocus' }, fixed: true, delay: 100 }
-	});
+	addEventListener("resize", initLayout);
 }
 
+function goalsFromHeaderId(headerId) {
+	let goals = [];
 
-init();
+	if (headerId === "tlbr") {
+		goals.push(g_goalGrid[0][0]);
+		goals.push(g_goalGrid[1][1]);
+		goals.push(g_goalGrid[2][2]);
+		goals.push(g_goalGrid[3][3]);
+		goals.push(g_goalGrid[4][4]);
+	}
+	else if (headerId === "bltr") {
+		goals.push(g_goalGrid[4][0]);
+		goals.push(g_goalGrid[3][1]);
+		goals.push(g_goalGrid[2][2]);
+		goals.push(g_goalGrid[1][3]);
+		goals.push(g_goalGrid[0][4]);
+	}
+	else if (headerId.startsWith("col")) {
+		let col = headerId.slice(-1);
+		col = parseInt(col) - 1;
+
+		for (let i = 0; i < 5; i++) {
+			goals.push(g_goalGrid[i][col]);
+		}
+	}
+	else if (headerId.startsWith("row")) {
+		let row = headerId.slice(-1);
+		row = parseInt(row) - 1;
+
+		for (let i = 0; i < 5; i++) {
+			goals.push(g_goalGrid[row][i]);
+		}
+	}
+	else {
+		assert(false);
+	}
+
+	return goals;
+}
+
+function computeScoreWithSynergies(headerId) {
+
+	// @Slow
+	function getSynergy(goal0, goal1) {
+		let synergyMax = Number.NEGATIVE_INFINITY;
+
+		for (let iTag = 0; iTag < goal0.tags.length; iTag++) {
+			let tagid = goal0.tags[iTag];
+			let tag = manifest.tags[tagid];
+
+			for (let iTagOther = 0; iTagOther < goal1.tags.length; iTagOther++) {
+				let tagidOther = goal1.tags[iTagOther];
+				let tagOther = manifest.tags[tagidOther];
+
+				for (let iTagSynergy = 0; iTagSynergy < tag.synergies.length; iTagSynergy++) {
+					let synergy = tag.synergies[iTagSynergy];
+
+					if (synergy.tagidOther === tagidOther) {
+						synergyMax = Math.max(synergyMax, synergy.synergy);
+					}
+				}
+			}
+		}
+
+		return (synergyMax === Number.NEGATIVE_INFINITY) ? 0 : synergyMax;
+	}
+
+	let result = 0;
+	let goals = goalsFromHeaderId(headerId);
+	assert(goals.length === 5);
+
+	for (let iGoal = 0; iGoal < 5; iGoal++) {
+		let goal = goals[iGoal];
+		result += goal.score;
+
+		for (let iGoalOther = iGoal + 1; iGoalOther < 5; iGoalOther++) {
+			let goalOther = goals[iGoalOther];
+			result -= getSynergy(goal, goalOther);
+		}
+	}
+
+	return result;
+}
+
+// @Slow
+function chooseGoals() {
+
+	function nextGoal() {
+		if (typeof nextGoal.iGoalNext === 'undefined') {
+			nextGoal.iGoalNext = 0;
+		}
+
+		while (manifest.goals[nextGoal.iGoalNext].cell) {
+			nextGoal.iGoalNext += 1;
+			nextGoal.iGoalNext %= manifest.goals.length;
+		}
+
+		var result = manifest.goals[nextGoal.iGoalNext];
+		nextGoal.iGoalNext += 1;
+		nextGoal.iGoalNext %= manifest.goals.length;
+		return result;
+	}
+
+	function setGoal(row, col, goal) {
+		assert(goal.cell === null);
+
+		let oldGoal = g_goalGrid[row][col];
+		if (oldGoal !== null) {
+			assert(oldGoal.cell);
+			oldGoal.cell = null;
+		}
+
+		g_goalGrid[row][col] = goal;
+		goal.cell = { row: row, col: col };
+	}
+
+	// @Slow
+	function getNextReplaceInstruction(headerId) {
+
+		function headerIdsFromCell(row, col) {
+			let headerIds = [];
+			switch (row) {
+				case 0:
+					headerIds.push("row1");
+					break;
+
+				case 1:
+					headerIds.push("row2");
+					break;
+
+				case 2:
+					headerIds.push("row3");
+					break;
+
+				case 3:
+					headerIds.push("row4");
+					break;
+
+				case 4:
+					headerIds.push("row5");
+					break;
+
+				default:
+					assert(false);
+			}
+
+			switch (col) {
+				case 0:
+					headerIds.push("col1");
+					break;
+
+				case 1:
+					headerIds.push("col2");
+					break;
+
+				case 2:
+					headerIds.push("col3");
+					break;
+
+				case 3:
+					headerIds.push("col4");
+					break;
+
+				case 4:
+					headerIds.push("col5");
+					break;
+
+				default:
+					assert(false);
+			}
+
+			if (row === col) {
+				headerIds.push("tlbr");
+			}
+
+			if (row + col === 4) {
+				headerIds.push("bltr");
+			}
+
+			assert(headerIds.length === 2 || headerIds.length === 3 || headerIds.length === 4);
+			return headerIds;
+		}
+
+		function getTagViolationsAndNearViolations(headerId, goalOmitFromConsideration) {
+			let result = {
+				tagViolations: [],
+				nearTagViolations: []		// Tags that are 1 away from exceeding limit
+			}
+
+			let goals = goalsFromHeaderId(headerId);
+			let mpTagidCGoal = Array(manifest.tags.length).fill(0);
+
+			for (let iGoal = 0; iGoal < 5; iGoal++) {
+
+				// Useful when getting tag constraints when we are replacing a cell
+
+				let goal = goals[iGoal];
+				if (goal === goalOmitFromConsideration)
+					continue;
+
+
+				// Check tag's MaxPerRow
+
+				for (let iTag = 0; iTag < goal.tags.length; iTag++) {
+
+					let tagid = goal.tags[iTag];
+					mpTagidCGoal[tagid]++;
+
+					let maxTagPerRow = manifest.tags[tagid].maxPerRow;
+
+					if (mpTagidCGoal[tagid] >= maxTagPerRow) {
+
+						let iNtvExisting = result.nearTagViolations.indexOf(tagid);
+						let iTvExisting = result.tagViolations.indexOf(tagid);
+
+						if (mpTagidCGoal[tagid] === maxTagPerRow) {
+							assert(iNtvExisting === -1);
+							assert(iTvExisting === -1);
+
+							result.nearTagViolations.push(tagid);
+						}
+						else if (mpTagidCGoal[tagid] === maxTagPerRow + 1) {
+							assert(iNtvExisting !== -1);
+							assert(iTvExisting === -1);
+
+							result.nearTagViolations.splice(iNtvExisting, 1);
+							result.tagViolations.push(tagid);
+						}
+						else {
+							assert(iNtvExisting === -1);
+							assert(iTvExisting !== -1);
+						}
+					}
+				}
+			}
+
+			return result;
+		}
+
+		let goals = goalsFromHeaderId(headerId);
+		let result = {
+			goalReplace: null,
+			tagsDisallowed: [],
+			score: 0
+		};
+
+		// Compute score
+
+		result.score = computeScoreWithSynergies(headerId);
+
+		// Get list of tag violations (and near tag violations)
+
+		let tv;
+		let ntv;
+		{
+			let tvNtv = getTagViolationsAndNearViolations(headerId);
+			tv = tvNtv.tagViolations;
+			ntv = tvNtv.nearTagViolations;
+		}
+
+		if (tv.length > 0) {
+
+			// Find first goal w/ tag that is in violation. It will be our replace candidate.
+
+		LGoalLoop:
+			for (let iGoal = 0; iGoal < 5; iGoal++) {
+				let goal = goals[iGoal];
+				assert(goal.cell);
+
+				for (let iTag = 0; iTag < goal.tags.length; iTag++) {
+					let tagid = goal.tags[iTag];
+
+					for (let iTagViolation = 0; iTagViolation < tv.length; iTagViolation++) {
+						let tagidViolation = tv[iTagViolation];
+
+						if (tagid === tagidViolation) {
+
+							// Found a goal that contains a violating tag. Mark it for replacement.
+
+							result.goalReplace = goal;
+							break LGoalLoop;
+						}
+					}
+				}
+			}
+
+			assert(result.goalReplace);		// Surely, by definition, at least one of our goals must have contained the violating tag!
+		}
+		else if (result.score < g_headerScoreMin) {
+			let goalLowestRawScore = goals[0];
+
+			for (let iGoal = 1; iGoal < 5; iGoal++) {
+				let goal = goals[iGoal];
+				if (goal.score < goalLowestRawScore.score) {
+					goalLowestRawScore = goal;
+				}
+			}
+
+			result.goalReplace = goalLowestRawScore;
+		}
+		else if (result.score > g_headerScoreMax) {
+			let goalHighestRawScore = goals[0];
+
+			for (let iGoal = 1; iGoal < 5; iGoal++) {
+				let goal = goals[iGoal];
+				if (goal.score > goalHighestRawScore.score) {
+					goalHighestRawScore = goal;
+				}
+			}
+
+			result.goalReplace = goalHighestRawScore;
+		}
+		else {
+			// All good!
+
+			assert(result.goalReplace === null);
+			assert(result.tagsDisallowed.length === 0);
+			assert(result.score >= g_headerScoreMin && result.score <= g_headerScoreMax);
+			return result;
+		}
+
+		// Compute tagsDisallowed
+
+		assert(result.goalReplace);
+
+		let headerIdsIntersect = headerIdsFromCell(result.goalReplace.cell.row, result.goalReplace.cell.col);
+		for (let iHeaderIdIntersect = 0; iHeaderIdIntersect < headerIdsIntersect.length; iHeaderIdIntersect++) {
+			let headerIdIntersect = headerIdsIntersect[iHeaderIdIntersect];
+			let tvNtvHeaderIntersect = getTagViolationsAndNearViolations(headerIdIntersect, result.goalReplace);
+
+			for (let iTvHeaderIntersect = 0; iTvHeaderIntersect < tvNtvHeaderIntersect.tagViolations.length; iTvHeaderIntersect++) {
+				result.tagsDisallowed.push(tvNtvHeaderIntersect.tagViolations[iTvHeaderIntersect]);
+			}
+
+			for (let iNtvHeaderIntersect = 0; iNtvHeaderIntersect < tvNtvHeaderIntersect.nearTagViolations.length; iNtvHeaderIntersect++) {
+				result.tagsDisallowed.push(tvNtvHeaderIntersect.nearTagViolations[iNtvHeaderIntersect]);
+			}
+		}
+
+		// Uniquify tagsDisallowed
+		// @Slow(could use Set)
+
+		result.tagsDisallowed.filter(function (value, index, ary) { return ary.indexOf(value) === index; });
+		return result;
+	}
+
+	function performReplace(headerId, replaceInstruction) {
+		let goals = goalsFromHeaderId(headerId);
+		let replaceRow = replaceInstruction.goalReplace.cell.row;
+		let replaceCol = replaceInstruction.goalReplace.cell.col;
+
+		LTryFindReplacement:
+			for (let cTryFindReplacement = 0; cTryFindReplacement < 100; cTryFindReplacement++) {
+
+				let goalCandidate = nextGoal();
+
+				// NOTE (andrew) Eagerly set the new goal so that computeScoreWithSynergies will consider it. If we
+				//  end up not wanting to choose this goal, fear not! The next iteration will use a new one!
+
+				setGoal(replaceRow, replaceCol, goalCandidate);
+
+				// Verify that goal doesn't have disallowed tags!
+
+				for (let iTagCandidate = 0; iTagCandidate < goalCandidate.tags.length; iTagCandidate++) {
+					for (let iTagDisallowed = 0; iTagDisallowed < replaceInstruction.tagsDisallowed.length; iTagDisallowed++) {
+						if (goalCandidate.tags[iTagCandidate] === replaceInstruction.tagsDisallowed[iTagDisallowed]) {
+							continue LTryFindReplacement;
+						}
+					}
+				}
+
+				// Verify that he moves us closer to the ideal score!
+
+				let scoreNew = computeScoreWithSynergies(headerId);
+				if (replaceInstruction.score >= g_headerScoreMin && replaceInstruction.score <= g_headerScoreMax) {
+
+					// Row score was in range before doing replacment. Make sure it is still in range.
+
+					if (scoreNew < g_headerScoreMin || scoreNew > g_headerScoreMax) {
+						continue;
+					}
+				}
+				else if (replaceInstruction.score < g_headerScoreMin) {
+
+					// We don't need to get within a valid range. We just need to get closer.
+
+					if (scoreNew <= replaceInstruction.score) {
+						continue;
+					}
+				}
+				else {
+					assert(replaceInstruction.score > g_headerScoreMax);
+
+					// We don't need to get within a valid range. We just need to get closer.
+
+					if (scoreNew >= replaceInstruction.score) {
+						continue;
+					}
+				}
+
+				// Our newly found goal meets all of our criteria! Stop searching!
+
+				break;
+			}
+	}
+
+	// Init extra fields on goals
+
+	for (let i = 0; i < manifest.goals.length; i++) {
+		manifest.goals[i].cell = null;
+	}
+
+	// Shuffle goals in manifest
+
+	for (let i = 0; i < manifest.goals.length; i++) {
+		let iNew = i + rngInt(manifest.goals.length - i);
+
+		var tmp = manifest.goals[i];
+		manifest.goals[i] = manifest.goals[iNew];
+		manifest.goals[iNew] = tmp;
+	}
+
+	// Pick random goals for each cell
+
+	for (let i = 0; i < 5; i++) {
+		for (let j = 0; j < 5; j++) {
+			setGoal(i, j, nextGoal());
+		}
+	}
+
+	// Mutate until we have a reasonable card
+
+	let stopMutating = false;
+	let iterations = 0;
+	let iterationsMax = 50;
+
+	// @Slow. Probably a better way to do this using some sort of constraint satisfaction technique. I'm just using a bunch of heuristics
+	//	to get a half-baked brute force/genetic algorithm style solution. Seems to work good enough. It is quite inefficient, but at 5x5 it's fine.
+	while (iterations < iterationsMax && !stopMutating) {
+		stopMutating = true;
+
+		for (let i = 0; i < g_headerIds.length; i++) {
+			let headerId = g_headerIds[i];
+			let replaceInstruction = getNextReplaceInstruction(headerId);
+
+			if (replaceInstruction.goalReplace === null)
+				continue;
+
+			stopMutating = false;
+			performReplace(headerId, replaceInstruction);
+		}
+
+		iterations++;
+	}
+
+	if (iterations < iterationsMax) {
+		console.log("Board balanced after " + (iterations - 1) + " iterations");
+	}
+	else {
+		assert(iterations == iterationsMax);
+		assert(!stopMutating);
+		console.log("Board imbalanced (" + iterationsMax + " iterations reached)");
+	}
+}
+
+function buildBoardHtml() {
+	for (let iRow = 0; iRow < 5; iRow++) {
+		for (let iCol = 0; iCol < 5; iCol++) {
+			let cell = document.getElementById(iRow + "_" + iCol);
+			let goal = g_goalGrid[iRow][iCol];
+
+			cell.innerHTML = htmlFromGoal(goal);
+		}
+	}
+}
+
+function superSecretDevDebugTool() {
+
+	let isCodeActive = false;
+
+	function toggleSuperSecretDevDebugTool() {
+		isCodeActive = !isCodeActive;
+
+		for (let iRow = 0; iRow < 5; iRow++) {
+			for (let iCol = 0; iCol < 5; iCol++) {
+				let cell = document.getElementById(iRow + "_" + iCol);
+				let goal = g_goalGrid[iRow][iCol];
+
+				if (isCodeActive) {
+					let sigma = (goal.score - manifest.goalScoreAvg) / manifest.goalScoreStddev;
+					sigma = Math.max(sigma, -3);
+					sigma = Math.min(sigma, 3);
+
+					let scoreNormalized = (sigma + 3) / 6;
+					let r = scoreNormalized * 255;
+					let g = (1 - scoreNormalized) * 255;
+
+					cell = document.getElementById(iRow + "_" + iCol);
+					cell.style.backgroundColor = "rgb(" + r + ", " + g + ", 0)";
+
+					assert(cell.innerHTML.indexOf("<br>") === -1);		// Trying to toggle on when already on?
+
+					cell.innerHTML += "<br>{" + goal.score + "}";
+				}
+				else {
+					cell.style.removeProperty("background-color");
+					let iBr = cell.innerHTML.indexOf("<br>");
+					assert(iBr !== -1);									// Trying to toggle off when already off?
+					cell.innerHTML = cell.innerHTML.substring(0, iBr)
+				}
+			}
+		}
+
+		for (let iHeaderId = 0; iHeaderId < g_headerIds.length; iHeaderId++) {
+
+			let headerId = g_headerIds[iHeaderId];
+			let goals = goalsFromHeaderId(headerId);
+			assert(goals.length === 5);
+
+			let headerDom = document.getElementById(headerId);
+
+			if (isCodeActive) {
+				let rawScore = 0;
+				for (let iGoal = 0; iGoal < 5; iGoal++) {
+					let goal = goals[iGoal];
+					rawScore += goal.score;
+				}
+
+				let scoreWithSynergy = computeScoreWithSynergies(headerId);
+
+				let scoreWithSynergyNormalized = (scoreWithSynergy - g_headerScoreMin) / (g_headerScoreMax - g_headerScoreMin);
+				let r = scoreWithSynergyNormalized * 255;
+				let g = (1 - scoreWithSynergyNormalized) * 255;
+
+				headerDom.style.backgroundColor = "rgb(" + r + ", " + g + ", 0)";
+
+				assert(headerDom.innerHTML.indexOf("<br>") === -1);		// Trying to toggle on when already on?
+
+				headerDom.innerHTML += "<br>{score:" + scoreWithSynergy.toFixed(2) + "}<br>{raw:" + rawScore.toFixed(2) + "}";
+			}
+			else {
+				headerDom.style.removeProperty("background-color");
+				let iBr = headerDom.innerHTML.indexOf("<br>");
+				assert(iBr !== -1);										// Trying to toggle off when already off?
+				headerDom.innerHTML = headerDom.innerHTML.substring(0, iBr)
+			}
+		}
+
+		// We added/removed HTML so we need to recalculate layout!
+
+		initLayout();
+	}
+
+	let keyLeft = 37;
+	let keyUp = 38;
+	let keyRight = 39;
+	let keyDown = 40;
+	let keyA = 65;
+	let keyB = 66;
+	let keyEsc = 27;
+
+	let konami = [keyUp, keyUp, keyDown, keyDown, keyLeft, keyRight, keyLeft, keyRight, keyB, keyA];
+	let iKonami = 0;
+
+	document.addEventListener("keydown",
+		function (event) {
+			if (event.keyCode === konami[iKonami]) {
+				iKonami++;
+			}
+			else if (event.keyCode === konami[0]) {
+				iKonami = 1;
+			}
+			else {
+				iKonami = 0;
+
+				if (event.keyCode == keyEsc && isCodeActive) {
+					toggleSuperSecretDevDebugTool();
+				}
+			}
+
+			if (iKonami === konami.length) {
+				toggleSuperSecretDevDebugTool();
+				iKonami = 0;
+			}
+		}
+	);
+
+	let debugStartToggledOn = false;
+	if (debugStartToggledOn) {
+		toggleSuperSecretDevDebugTool();
+	}
+}
+
+// Set up global state
+// BB (andrew) This is pretty janky, but oh well.
+
+let g_suffixEasy = "0";
+let g_suffixNormal = "5";		// NOTE (andrew) Any other suffix also defaults to normal. But 5 is the explicit suffix.
+let g_suffixHard = "9";
+
+// NOTE (andrew) Difficulty string is capitalized for... historical reasons
+
+let g_difficulty = "Normal";		// EW please let me use enums JavaScript !!!
+let g_headerIds = ["row1", "row2", "row3", "row4", "row5", "col1", "col2", "col3", "col4", "col5", "tlbr", "bltr"];
+let g_cPairwiseSynergies = 10;									// 5 choose 2
+let g_cPairwiseSynergiesPerGoal = g_cPairwiseSynergies / 5;		// NOTE (andrew) Each goal has 4 other goals it can synergize with. But we don't count synergies both ways, so this should equal 2!
+let g_avgScorePostSynergy = manifest.goalScoreAvg - manifest.pairwiseGoalSynergyAvg * g_cPairwiseSynergiesPerGoal;
+
+// Set up 5x5 buffer
+
+let g_goalGrid = [];
+for (let i = 0; i < 5; i++) {
+	g_goalGrid.push([]);
+	for (let j = 0; j < 5; j++) {
+		g_goalGrid[i].push(null);
+	}
+}
+
+// Seed and determine difficulty
+
+initSeed();
+
+let g_headerScoreIdeal = g_avgScorePostSynergy * 5;
+if (g_difficulty === "Easy") {
+	g_headerScoreIdeal *= 0.7;
+}
+
+else if (g_difficulty === "Hard") {
+	g_headerScoreIdeal *= 1.3;
+}
+
+// NOTE (andrew) sqrt is intended to dampen the volatility a little bit. It is definitely a knob that can be tweaked.
+
+let g_headerScoreMin = g_headerScoreIdeal - Math.sqrt(5 * manifest.goalScoreStddev);
+let g_headerScoreMax = g_headerScoreIdeal + Math.sqrt(5 * manifest.goalScoreStddev);
+
+chooseGoals();
+buildBoardHtml();
+initHandlers();
+initLayout();
+superSecretDevDebugTool();
+
+document.getElementById("panelMain").style.visibility = "visible";

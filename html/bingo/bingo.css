@@ -1,94 +1,238 @@
-#mainDiv {
+body {
+	background-color: #2A2A2F;
+	color: #F8FFFF;
+
+	font-family: arial;
 }
+
+
+
+/* TABLE */
 
 table {
 	margin: 50px 80px 0px 50px;
 	border-collapse: collapse;
 
 	font-family: arial;
-	font-size: 80%;
+	font-size: 0.8rem;
 	text-align: center;
-	text-wrap: break-word;
+	word-wrap: break-word;
 	cursor: pointer;
 
 	/* unselectable text */
+
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
-	-khtml-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
 }
 
-tbody {
-	float: left;
-	display: table-row-group;
+th {
+	background-color: #0D142D;
+	border: 1px solid #253456;
+	color: #5066BF;
+	padding: 3px;
 }
 
-th {
-	background-color: Gray;
-	border: 1px solid black;
-	padding: 3px;
+th:hover,
+th.selected {
+	background-color: #000042;
 }
 
 td {
 	display: table-cell;
-	border: 1px solid black;
+    position: relative;
+	border: 1px solid #4F4F4F;
+	color: #E2E2E2;
 	padding: 5px;
-	background-color: LightGray;
-	visibility: hidden;
+	background-color: #1F1F1F;
 }
 
-td:hover,
 td.fakeHover {
-	background-color: Gray;
+	background-color: #000029;
+}
+
+td.preselected,
+td.selected {
+	background-color: #000042;
+}
+
+td:hover {
+	background-color: #000029;
 }
 
 td.greenCell {
-	background-color: LightGreen;
+	background-color: #315E3F;
 }
 
-td.greenCell:hover,
-td.greenCell.fakeHover {
-	background-color: Green;
+td.greenCell:hover {
+	background-color: #357A49;
 }
 
 td.redCell {
-	background-color: LightCoral;
+	background-color: #63352F;
 }
 td.redCell:hover {
-	background-color: Red;
+	background-color: #7F3930;
 }
 
-#cardPanel {
+
+
+/* TEXT */
+
+
+#panelRight {
+	font-size: 0.8rem;
+	font-family: arial;
+	line-height: 1.5em;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+h2 {
+	font-family: arial;
+	font-size: 200%;
+}
+
+#txtDifficulty {
+	margin-top: 20px;
+	margin-left: 50px;
+}
+
+#txtCredit {
+	font-size: 0.6rem;
+	font-family: arial;
+	position: fixed;
+	bottom: 10px;
+	left: 10px;
+}
+
+
+
+/* TOOLTIP */
+
+.ttCrumb {
+	color: #F2F2F2;
+	border-bottom: 1px dotted #F2F2F2;
+	position: relative;
+}
+
+.ttText {
+	visibility: hidden;
+	width: 150px;
+	background-color: #555;
+	color: #fff;
+	text-align: center;
+	padding: 10px 5px;
+	border-radius: 6px;
+
+	position: absolute;
+	z-index: 1;
+	top: 200%;
+	left: 50%;
+	margin-left: -75px;
+	opacity: 0;
+	transition: opacity 0.3s;
+}
+
+.ttText::after {
+	content: "";
+	position: absolute;
+	bottom: 100%;
+	left: 50%;
+	margin-left: -12.5px;
+	border-width: 10px;
+	border-style: solid;
+	border-color: transparent transparent #555 transparent;
+}
+
+.ttCrumb:hover > .ttText {
+	visibility: visible;
+	opacity: 1;
+}
+
+.panelTracker {
+    display: inline-block;
+    position: absolute;
+
+    left: 50%;
+    transform: translate(-50%);
+    bottom: 5px;
+
+    background-color: #2F2F2F;
+
+    white-space: nowrap;
+}
+
+.txtTracker {
+    display: inline-block;
+    padding-left: 0.6em;
+    padding-right: 0.6em;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    background-color: #3F3F3F;
+}
+
+button:hover {
+    background-color: #5F5F5F;
+}
+
+.btnTrackerMinus,
+.btnTrackerPlus {
+    display: inline-block;
+}
+
+
+/* ETC */
+
+#panelMain{
+	visibility: hidden;     /* Revealed after JS computes layout */
+}
+
+#panelCard {
 	display: inline-block;
 }
-#rightPanel {
+
+#panelRight {
 	display: inline-block;
 	vertical-align: top;
 	position: relative;
 }
 
-#newCardBtn {
-	padding: 10px;
-	margin-left: 2em;
-	margin-bottom: 2em;
+#panelRadio {
+	display: inline-block;
 }
 
-h2 {
-	font-family: arial;
-	font-size: 150%;
+.btnNewCard {
+	display: inline-block;
+	margin-right: 2em;
+
+    color: white;
+
+	padding: 8px 10px;
 }
 
-#aboutText {
-	font-size: 80%;
-	font-family: arial;
-	line-height: 1.5em;
+#spanDifficulty {
+	font-weight: bold;
 }
 
-#creditText {
-	font-size: 70%;
-	font-family: arial;
-	position: absolute;
-	bottom: 0px;
+
+/* unvisited link */
+a:link,
+a:visited {
+  color: #689CD0;
+}
+
+/* mouse over link */
+a:hover {
+  color: #5FB2BF;
+}
+
+/* selected link */
+a:active {
+  color: #86D5E0;
 }
